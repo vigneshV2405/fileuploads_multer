@@ -19,11 +19,19 @@ const storage = multer.diskStorage({
 const uploads = multer({storage:storage})
 
 app.post('/uploadfile',uploads.single('image'),(req,res)=>{
-    console.log(req.body)
-    /* fs.rename(__dirname+'/uploads/'+req.file.filename,__dirname+'/uploads/'+req.file.originalname,(resp)=>{
-        res.send('wait......')
-    }) */
-    res.send('uploaded')
+    let folder = __dirname+'/uploads/'+req.body.username
+    function rename(){
+        fs.rename(__dirname+'/uploads/'+req.file.filename,__dirname+'/uploads/'+req.body.username+'/'+req.file.filename,(resp)=>{
+            res.send('uploaded......')
+        })
+    }
+    if(fs.existsSync(folder)){
+        rename()
+    }
+    else{
+        fs.mkdirSync(__dirname+'/uploads/'+req.body.username)
+        rename()
+    }
 })
 
 app.listen(3500,()=>{console.log('app running on 3500')})
